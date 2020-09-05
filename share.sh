@@ -41,10 +41,9 @@ cd $path || exit
 echo "Server hosted publicly at $publicIP:$port"
 echo "Server hosted locally at $localIP:$port" 
 
-python3 -m http.server "$port" 1> /dev/null &
-
-if ! command -v xclip &> /dev/null; then
-	exit
+if command -v xclip &> /dev/null; then
+	echo "$copyIP:$port"
+	echo "$copyIP:$port" | $(xclip -selection clipboard) &
 fi
-echo "$copyIP:$port"
-echo "$copyIP:$port" | $(xclip -selection clipboard)
+
+python3 -m http.server "$port"
