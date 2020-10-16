@@ -11,8 +11,9 @@ fi
 publicIP=$(dig +short myip.opendns.com @resolver1.opendns.com)
 localIP=$(hostname -I | sed 's/ *$//')
 copyIP=$publicIP
+WGET=0
 
-while getopts ":p:dl" opt; do
+while getopts ":p:dlw" opt; do
 	case ${opt} in
 		d ) rm -rf $path
 		  ;;
@@ -20,10 +21,11 @@ while getopts ":p:dl" opt; do
 		  ;;
 		l ) copyIP=$localIP
 		  ;;
+		w ) WGET=1
+		  ;;
 		: ) echo "This option requires an argument"
 		  ;;
 		\? ) echo "Usage: cmd [-d] [-p] [-l] SOURCE"
-
 	esac
 done
 shift $((OPTIND -1))
@@ -44,7 +46,12 @@ echo "Server hosted locally at $localIP:$port"
 
 if command -v xclip &> /dev/null; then
 	echo "$copyIP:$port"
-	echo -n "$copyIP:$port" | $(xclip -selection clipboard) &
+	if [ $WGET == 0 ]; then
+		COPY_STR="$copyIP:$port"
+	else
+		COPY_STR="wget $copyIP:$port/$(basename $1)"
+	fi
+	echo -n "$COPY_STR" | $(xclip -selection clipboard) &
 fi
 
 python3 -m http.server "$port"
