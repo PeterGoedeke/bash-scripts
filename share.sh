@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-path="./shared"
+
+path="$HOME/shared"
 port=8000
 
 if ! command -v xclip &> /dev/null; then
