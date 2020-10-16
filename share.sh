@@ -9,7 +9,7 @@ if ! command -v xclip &> /dev/null; then
 fi
 
 publicIP=$(dig +short myip.opendns.com @resolver1.opendns.com)
-localIP=$(hostname -I)
+localIP=$(hostname -I | sed 's/ *$//')
 copyIP=$publicIP
 
 while getopts ":p:dl" opt; do
@@ -44,7 +44,7 @@ echo "Server hosted locally at $localIP:$port"
 
 if command -v xclip &> /dev/null; then
 	echo "$copyIP:$port"
-	echo "$copyIP:$port" | $(xclip -selection clipboard) &
+	echo -n "$copyIP:$port" | $(xclip -selection clipboard) &
 fi
 
 python3 -m http.server "$port"
